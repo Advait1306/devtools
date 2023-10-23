@@ -54,13 +54,19 @@ export default class AccountEngine {
 
     }
 
-    login = async () => {
+    login = async ({email}: { email: string }) => {
         const actionCodeSettings = {
             url: 'https://auth.sixhuman.com',
             handleCodeInApp: true
         }
 
-        const response = await sendSignInLinkToEmail(this.auth, 'advaitbansode4@gmail.com', actionCodeSettings);
+        try {
+            const response = await sendSignInLinkToEmail(this.auth, email, actionCodeSettings);
+            return true;
+        } catch (e) {
+            console.log(e)
+            return false;
+        }
     }
 
     logout = async () => {

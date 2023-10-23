@@ -12,9 +12,7 @@ function App() {
             {
                 accountStore.isInitialized &&
                 (accountStore.user ?
-                    <Home/>
-                    :
-                    <Login/>)
+                    <Home/> : <Login/>)
             }
         </Background>
     );

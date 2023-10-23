@@ -8,7 +8,7 @@ import { initializeApp } from "firebase/app";
 import App from "./presentation/App";
 import AccountEngine from "./application/account/account.engine";
 
-import { ChakraProvider } from '@chakra-ui/react'
+import {ChakraProvider, extendTheme} from '@chakra-ui/react'
 
 
 // Your web app's Firebase configuration
@@ -32,8 +32,16 @@ resolveEager();
 const element = document.getElementById('react-root')
 const root = createRoot(element);
 
+const theme = extendTheme({
+    colors: {
+        brand: {
+            background: "#272727",
+        }
+    },
+})
+
 root.render(
-    <ChakraProvider>
+    <ChakraProvider theme={theme}>
         <App/>
     </ChakraProvider>
 );

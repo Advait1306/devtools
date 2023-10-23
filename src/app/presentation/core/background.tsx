@@ -3,7 +3,7 @@ import {Box} from "@chakra-ui/react";
 
 function Background({children}: { children: React.ReactNode }) {
     return (
-        <Box width={"full"} height={"100vh"} background={"#272727"}>
+        <Box width={"full"} height={"100vh"} bg={"brand.background"} >
             {children}
         </Box>
     );
