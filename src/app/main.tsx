@@ -5,8 +5,10 @@ import {container} from "tsyringe";
 
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
-import Home from "./pages/home";
-import AccountEngine from "./engines/account.engine";
+import App from "./presentation/App";
+import AccountEngine from "./application/account/account.engine";
+
+import { ChakraProvider } from '@chakra-ui/react'
 
 
 // Your web app's Firebase configuration
@@ -30,5 +32,9 @@ resolveEager();
 const element = document.getElementById('react-root')
 const root = createRoot(element);
 
-root.render(<Home/>);
+root.render(
+    <ChakraProvider>
+        <App/>
+    </ChakraProvider>
+);
 
