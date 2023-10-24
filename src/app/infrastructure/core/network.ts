@@ -5,19 +5,19 @@ import {getAuth} from "firebase/auth";
 @singleton()
 export default class Network {
     http = axios.create({
-        baseURL: 'https://api.sixhuman.com',
+        baseURL: 'http://localhost:3000',
         headers: {
             'Content-Type': 'application/json',
         }
     });
 
     constructor() {
-        this.http.interceptors.request.use(function (config) {
+        this.http.interceptors.request.use(async function (config) {
             const auth = getAuth();
+
             if(auth.currentUser) {
-                auth.currentUser.getIdToken().then((token) => {
-                    config.headers.Authorization = `Bearer ${token}`
-                })
+                const token = await auth.currentUser.getIdToken();
+                config.headers.Authorization = `Bearer ${token}`
             }
 
             return config;

@@ -42,7 +42,7 @@ function LoginPage() {
             >
                 <Heading color={'white'}>devtools</Heading>
                 <Box marginY={10}>
-                    <FormLabel color={'white'}>enter your email</FormLabel>
+                    <FormLabel color={'white'}>email</FormLabel>
                     <Input
                         variant='Filled'
                         placeholder='Filled'

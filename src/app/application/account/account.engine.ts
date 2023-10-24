@@ -113,7 +113,7 @@ export default class AccountEngine {
         }
     }
 
-    setNameAndPhoneNumber = async (name: string, phoneNumber: string) => {
+    setNameAndPhoneNumber = async ({name, phoneNumber}: {name: string, phoneNumber: string}) => {
         try {
             const response = await this.accountRepository.updateUserData({name, phone_number: phoneNumber})
             this.accountStore.setState({
@@ -155,7 +155,7 @@ export default class AccountEngine {
         }
     }
 
-    setJobAndCompany = async (job: string, company: string) => {
+    setJobAndCompany = async ({job, company}: {job: string, company: string}) => {
         try {
             const response = await this.accountRepository.updateUserData({job, company})
             this.accountStore.setState({
