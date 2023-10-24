@@ -2,12 +2,14 @@ import {container, singleton} from "tsyringe";
 import {getAuth, sendSignInLinkToEmail, signInWithEmailLink, signOut} from "firebase/auth";
 import {AccountState} from "./account.state";
 import {createStore, useStore} from "zustand";
+import AccountRepository from "../../infrastructure/account/account.repository";
 
 
 @singleton()
 export default class AccountEngine {
     accountStore = createStore<AccountState>(() => ({isInitialized: false}));
     auth = getAuth();
+    accountRepository = container.resolve(AccountRepository);
 
     constructor() {
         this.setupLoginLinkHandler();
@@ -28,16 +30,15 @@ export default class AccountEngine {
     }
 
     private initialize() {
-
         this.auth.onAuthStateChanged((user) => {
             if (user) {
                 this.accountStore.setState({
                     user: {
                         id: user?.uid,
                         email: user?.email,
-                        name: user?.displayName,
                     },
                 })
+                this.getUserData();
             } else {
                 this.accountStore.setState({
                     user: undefined,
@@ -50,8 +51,6 @@ export default class AccountEngine {
                 isInitialized: true
             })
         })
-
-
     }
 
     login = async ({email}: { email: string }) => {
@@ -71,6 +70,117 @@ export default class AccountEngine {
 
     logout = async () => {
         await signOut(this.auth)
+    }
+
+    getUserData = async () => {
+        try {
+            const data = await this.accountRepository.getUserData();
+            this.accountStore.setState({
+                user: {
+                    ...data
+                }
+            });
+        } catch (e) {
+            console.log(e)
+        }
+    }
+
+    setName = async (name: string) => {
+        try {
+            const response = await this.accountRepository.updateUserData({name})
+            this.accountStore.setState({
+                user: {
+                    ...response
+                }
+            })
+            return [true]
+        } catch (e) {
+            return [false, e.message];
+        }
+    }
+
+    setPhoneNumber = async (phoneNumber: string) => {
+        try {
+            const response = await this.accountRepository.updateUserData({phone_number: phoneNumber})
+            this.accountStore.setState({
+                user: {
+                    ...response
+                }
+            })
+            return [true]
+        } catch (e) {
+            return [false, e.message];
+        }
+    }
+
+    setNameAndPhoneNumber = async (name: string, phoneNumber: string) => {
+        try {
+            const response = await this.accountRepository.updateUserData({name, phone_number: phoneNumber})
+            this.accountStore.setState({
+                user: {
+                    ...response
+                }
+            })
+            return [true]
+        } catch (e) {
+            return [false, e.message];
+        }
+    }
+
+    setJob = async (job: string) => {
+        try {
+            const response = await this.accountRepository.updateUserData({job})
+            this.accountStore.setState({
+                user: {
+                    ...response
+                }
+            })
+            return [true]
+        } catch (e) {
+            return [false, e.message];
+        }
+    }
+
+    setCompany = async (company: string) => {
+        try {
+            const response = await this.accountRepository.updateUserData({company})
+            this.accountStore.setState({
+                user: {
+                    ...response
+                }
+            })
+            return [true]
+        } catch (e) {
+            return [false, e.message];
+        }
+    }
+
+    setJobAndCompany = async (job: string, company: string) => {
+        try {
+            const response = await this.accountRepository.updateUserData({job, company})
+            this.accountStore.setState({
+                user: {
+                    ...response
+                }
+            })
+            return [true]
+        } catch (e) {
+            return [false, e.message];
+        }
+    }
+
+    completeOnboarding = async () => {
+        try {
+            const response = await this.accountRepository.completeOnboarding();
+            this.accountStore.setState({
+                user: {
+                    ...response
+                }
+            })
+            return [true]
+        } catch (e) {
+            return [false, e.message];
+        }
     }
 
     static useAccountStore = () => {

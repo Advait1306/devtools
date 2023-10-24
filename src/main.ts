@@ -44,7 +44,6 @@ if (!gotTheLock) {
   app.quit();
 } else {
   app.on('second-instance', (event, commandLine, workingDirectory) => {
-    console.log('second-instance');
     if (mainWindow) {
       if (mainWindow.isMinimized()) {
         mainWindow.restore();
