@@ -1,6 +1,7 @@
-import { app, BrowserWindow } from 'electron';
+import { app, BrowserWindow, ipcMain } from 'electron';
 import path from 'path';
 import process from "process";
+import { spawn, exec } from 'child_process';
 
 let mainWindow: BrowserWindow | null;
 
@@ -24,6 +25,7 @@ const createWindow = () => {
     height: 800,
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
+      nodeIntegration: true,
     },
   });
 
@@ -54,8 +56,86 @@ if (!gotTheLock) {
     }
   });
 
-  // Create mainWindow, load the rest of the app, etc...
   app.whenReady().then(() => {
+
+    ipcMain.handle('check-code', async (event, args) => {
+      return new Promise((resolve, reject) => {
+        exec('code -v', (err, stdout, stderr) => {
+          console.log('err', err)
+          console.log('stdout', stdout)
+          console.log('stderr', stderr)
+
+          resolve(stdout)
+        });
+      })
+    })
+
+    ipcMain.handle('generate-ssh-key', async (event, args) => {
+      return new Promise((resolve, reject) => {
+        exec('ssh-keygen -f ~/.ssh/test3 -N \'\' -C developer', (err, stdout, stderr) => {
+            console.log('err', err)
+            console.log('stdout', stdout)
+            console.log('stderr', stderr)
+
+            exec('cat ~/.ssh/test3.pub', (err, stdout, stderr) => {
+                console.log('err', err)
+                console.log('stdout', stdout)
+                console.log('stderr', stderr)
+
+                resolve(stdout)
+            });
+        })
+      })
+    })
+
+    ipcMain.handle('open-vscode-remote-config', async (event, args) => {
+      exec('rm -rf ~/.ssh/tic_config', (err, stdout, stderr) => {
+        console.log('err', err)
+        console.log('stdout', stdout)
+        console.log('stderr', stderr)
+
+        exec('touch ~/.ssh/tic_config', (err, stdout, stderr) => {
+          console.log('err', err)
+          console.log('stdout', stdout)
+          console.log('stderr', stderr)
+
+          exec('echo "Host developer \n  HostName 35.207.199.109 \n  User developer \n  IdentityFile ~/.ssh/developer" | cat > ~/.ssh/tic_config', (err, stdout, stderr) => {
+            console.log('err', err)
+            console.log('stdout', stdout)
+            console.log('stderr', stderr)
+
+            exec('cat ~/.ssh/config', (err, stdout, stderr) => {
+              if(!stdout.includes('Include "tic_config"')) {
+                console.log('doesnt include')
+
+                exec('echo "Include \\"tic_config\\"" | cat - ~/.ssh/config > tempfile && mv tempfile ~/.ssh/config', (err, stdout, stderr) => {
+                    console.log('err', err)
+                    console.log('stdout', stdout)
+                    console.log('stderr', stderr)
+
+                    console.log('attempting vsc run')
+                    exec('code --folder-uri "vscode-remote://ssh-remote+developer/home/developer"', (err, stdout, stderr) => {
+                      console.log('vsc run')
+                      console.log('err', err)
+                      console.log('stdout', stdout)
+                      console.log('stderr', stderr)
+                    })
+                })
+              } else {
+                console.log('attempting vsc run')
+                exec('code --folder-uri "vscode-remote://ssh-remote+developer/home/developer"', (err, stdout, stderr) => {
+                  console.log('vsc run')
+                  console.log('err', err)
+                  console.log('stdout', stdout)
+                  console.log('stderr', stderr)
+                })
+              }
+            })
+          })
+        })
+      });
+    })
+
     createWindow()
   })
 
@@ -67,9 +147,6 @@ if (!gotTheLock) {
   })
 }
 
-// Quit when all windows are closed, except on macOS. There, it's common
-// for applications and their menu bar to stay active until the user quits
-// explicitly with Cmd + Q.
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
     app.quit();
@@ -84,5 +161,4 @@ app.on('activate', () => {
   }
 });
 
-// In this file you can include the rest of your app's specific main process
-// code. You can also put them in separate files and import them here.
+
