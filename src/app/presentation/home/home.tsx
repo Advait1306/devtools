@@ -2,6 +2,7 @@ import React from 'react';
 import {Box, Button, Center, Text} from "@chakra-ui/react";
 import {container} from "tsyringe";
 import AccountEngine from "../../application/account/account.engine";
+import InstanceComponent from "../instance/instance.component";
 
 function Home() {
 
@@ -13,6 +14,7 @@ function Home() {
                 <Box>
                     <Text color={"white"}>Home</Text>
                     <Button onClick={accountEngine.logout}>logout</Button>
+                    <InstanceComponent/>
                 </Box>
             </Center>
         </Box>
