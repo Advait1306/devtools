@@ -27,8 +27,7 @@ function LoginPage() {
 
     if (linkSent) {
         return (<Center h={'full'}>
-            <Text color={'white'}>we’ve sent you a link on your email, open the link on this computer to complete the login
-                process</Text>
+            <Text color={'white'}>You’ll find the login link in an email we’ve sent you. Make sure you access it from this computer. </Text>
         </Center>)
     }
 

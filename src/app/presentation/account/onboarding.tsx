@@ -4,7 +4,6 @@ import AccountEngine from "../../application/account/account.engine";
 import {container} from "tsyringe";
 
 function Onboarding() {
-
     const accountEngine = container.resolve(AccountEngine);
     const {user} = AccountEngine.useAccountStore();
 
@@ -63,7 +62,7 @@ function Onboarding() {
         setIsLoading(false);
     }
 
-    if(!step) {
+    if (!step) {
         return <></>
     }
 
@@ -131,7 +130,8 @@ function Onboarding() {
         return (
             <Center h={'full'} display={'flex'} flexDirection={'column'}>
                 <Box marginY={10}>
-                    <Text color={'white'}>Devtools is still under beta, hope you report all your feedback so we can make it
+                    <Text color={'white'}>Devtools is still under beta, hope you report all your feedback so we can make
+                        it
                         better</Text>
                 </Box>
                 <Button onClick={completeOnboarding}>continue</Button>
