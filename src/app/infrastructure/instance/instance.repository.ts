@@ -21,8 +21,32 @@ export default class InstanceRepository {
         return response.data;
     }
 
+    async createSSHKey(): Promise<string> {
+        // @ts-ignore
+        return await window.electron.generateSSHKey();
+    }
+
     async addSSHKey(key: string) {
-        const response = await this.http.post('/instance/key', {key});
+        const response = await this.http.put('/instance/key', {key, user: 'developer'});
         return response.data;
+    }
+
+    async connectToInstance({ip, onExit}: {ip: string, onExit: () => void}) {
+
+        console.log('connecting-to-instance', ip)
+
+        // @ts-ignore
+        const disconnectListener = window.electron.sshDisconnected(() => {
+            onExit();
+            disconnectListener();
+        })
+
+        // @ts-ignore
+        return await window.electron.connectToInstance(ip)
+    }
+
+    async launchRemoteVSC(ip: string) {
+        // @ts-ignore
+        return await window.electron.launchRemoteVSC(ip);
     }
 }

@@ -2,8 +2,9 @@ import { app, BrowserWindow, ipcMain } from 'electron';
 import path from 'path';
 import process from "process";
 import { spawn, exec } from 'child_process';
+import {connectViaSSH, createSSHKey, launchRemoteVSCode} from "./app/helpers/shell/instance";
 
-let mainWindow: BrowserWindow | null;
+export let mainWindow: BrowserWindow | null;
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require('electron-squirrel-startup')) {
@@ -70,71 +71,11 @@ if (!gotTheLock) {
       })
     })
 
-    ipcMain.handle('generate-ssh-key', async (event, args) => {
-      return new Promise((resolve, reject) => {
-        exec('ssh-keygen -f ~/.ssh/test3 -N \'\' -C developer', (err, stdout, stderr) => {
-            console.log('err', err)
-            console.log('stdout', stdout)
-            console.log('stderr', stderr)
+    ipcMain.handle('generate-ssh-key', createSSHKey)
 
-            exec('cat ~/.ssh/test3.pub', (err, stdout, stderr) => {
-                console.log('err', err)
-                console.log('stdout', stdout)
-                console.log('stderr', stderr)
+    ipcMain.handle('connect-to-instance', connectViaSSH)
 
-                resolve(stdout)
-            });
-        })
-      })
-    })
-
-    ipcMain.handle('open-vscode-remote-config', async (event, args) => {
-      exec('rm -rf ~/.ssh/tic_config', (err, stdout, stderr) => {
-        console.log('err', err)
-        console.log('stdout', stdout)
-        console.log('stderr', stderr)
-
-        exec('touch ~/.ssh/tic_config', (err, stdout, stderr) => {
-          console.log('err', err)
-          console.log('stdout', stdout)
-          console.log('stderr', stderr)
-
-          exec('echo "Host developer \n  HostName 35.207.199.109 \n  User developer \n  IdentityFile ~/.ssh/developer" | cat > ~/.ssh/tic_config', (err, stdout, stderr) => {
-            console.log('err', err)
-            console.log('stdout', stdout)
-            console.log('stderr', stderr)
-
-            exec('cat ~/.ssh/config', (err, stdout, stderr) => {
-              if(!stdout.includes('Include "tic_config"')) {
-                console.log('doesnt include')
-
-                exec('echo "Include \\"tic_config\\"" | cat - ~/.ssh/config > tempfile && mv tempfile ~/.ssh/config', (err, stdout, stderr) => {
-                    console.log('err', err)
-                    console.log('stdout', stdout)
-                    console.log('stderr', stderr)
-
-                    console.log('attempting vsc run')
-                    exec('code --folder-uri "vscode-remote://ssh-remote+developer/home/developer"', (err, stdout, stderr) => {
-                      console.log('vsc run')
-                      console.log('err', err)
-                      console.log('stdout', stdout)
-                      console.log('stderr', stderr)
-                    })
-                })
-              } else {
-                console.log('attempting vsc run')
-                exec('code --folder-uri "vscode-remote://ssh-remote+developer/home/developer"', (err, stdout, stderr) => {
-                  console.log('vsc run')
-                  console.log('err', err)
-                  console.log('stdout', stdout)
-                  console.log('stderr', stderr)
-                })
-              }
-            })
-          })
-        })
-      });
-    })
+    ipcMain.handle('launch-remote-vsc', launchRemoteVSCode)
 
     createWindow()
   })

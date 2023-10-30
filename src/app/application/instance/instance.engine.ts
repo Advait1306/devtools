@@ -16,9 +16,9 @@ export default class InstanceEngine {
     private async initialize() {
 
         // window.electron.openVSCodeRemoteConfig();
-        window.electron.generateSSHKey();
-        const res = (await window.electron.checkCode());
-        console.log('res', res)
+        // window.electron.generateSSHKey();
+        // const res = (await window.electron.checkCode());
+        // console.log('res', res)
 
         await this.getInstanceInfo();
         setInterval(this.getInstanceInfo.bind(this), 5000)
@@ -36,8 +36,17 @@ export default class InstanceEngine {
                 machine: {
                     name: response.name,
                     status: response.status,
+                    ip: response.ip
                 }
             })
+
+            if (response.status === 'RUNNING'
+                && (!this.instanceStore.getState().connection
+                    || this.instanceStore.getState()?.connection?.status === 'DISCONNECTED'
+                )) {
+                this.connectToInstance();
+            }
+
         } catch (e) {
             console.log('error', e);
         }
@@ -61,12 +70,54 @@ export default class InstanceEngine {
         }
     }
 
-    private async addSSHKey(key: string) {
+    private async connectToInstance() {
+        console.log('connecting-to-instance')
 
+        this.instanceStore.setState({
+            connection: {
+                status: 'CONNECTING'
+            }
+        })
+
+        const publicKey = await this.createSSHKey();
+        console.log('publicKey', publicKey)
+
+        await this.addSSHKey(publicKey);
+        console.log('added-ssh-key')
+
+        console.log('connecting-to-instance')
+        await this.connectSSH();
+
+        this.instanceStore.setState({
+            connection: {
+                status: 'CONNECTED'
+            }
+        })
+    }
+
+    private async createSSHKey() {
+        console.log('creating-ssh-key')
+        return await this.instanceRepository.createSSHKey();
+    }
+
+    private async addSSHKey(key: string) {
+        console.log('adding-ssh-key')
+        await this.instanceRepository.addSSHKey(key);
     }
 
     private async connectSSH() {
+        await this.instanceRepository.connectToInstance({ip: this.instanceStore.getState().machine.ip, onExit: () => {
+            console.log('disconnected')
+            this.instanceStore.setState({
+                connection: {
+                    status: 'DISCONNECTED'
+                }
+            })
+        }});
+    }
 
+    async launchRemoteVSC() {
+        await this.instanceRepository.launchRemoteVSC(this.instanceStore.getState().machine.ip);
     }
 
     static useInstanceStore() {

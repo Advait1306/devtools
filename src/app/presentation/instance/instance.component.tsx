@@ -16,7 +16,11 @@ function InstanceComponent() {
         instanceEngine.stopInstance();
     }
 
-    if(instanceStore.initialized === false) {
+    const launchVSCode = () => {
+        instanceEngine.launchRemoteVSC();
+    }
+
+    if (instanceStore.initialized === false) {
         return <Text color={'white'}>attempting to connect to server</Text>
     }
 
@@ -27,6 +31,13 @@ function InstanceComponent() {
 
             <Button onClick={startInstance}>Start</Button>
             <Button onClick={stopInstance}>Stop</Button>
+
+            {
+                (instanceStore.machine?.status === 'RUNNING'
+                    && instanceStore.connection.status === 'CONNECTED')
+                &&
+                <Button onClick={launchVSCode}>Launch VSCODE</Button>
+            }
         </Box>
     );
 }
