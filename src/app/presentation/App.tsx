@@ -8,8 +8,6 @@ import Onboarding from "./account/onboarding";
 function App() {
     const accountStore = AccountEngine.useAccountStore();
 
-    console.log(accountStore.user)
-
     return (
         <Background>
             {

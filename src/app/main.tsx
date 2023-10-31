@@ -38,8 +38,14 @@ const theme = extendTheme({
     colors: {
         brand: {
             background: "#272727",
+            primary: "#151515",
+            gray: '#D9D9D9',
         }
     },
+    fonts: {
+        heading: 'Geist',
+        body: 'Geist'
+    }
 })
 
 root.render(
