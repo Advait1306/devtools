@@ -14,7 +14,6 @@ function Computer() {
     const isLoading = instanceStore.machine?.status !== "RUNNING" && instanceStore.machine?.status !== "TERMINATED";
 
     const powerButtonHandler = () => {
-        console.log('power button clicked');
         if (!isRunning) {
             instanceEngine.startInstance();
         } else {
@@ -22,9 +21,7 @@ function Computer() {
         }
     }
 
-    const copyIpHandler = () => {
-
-    }
+    const copyIpHandler = () => {}
 
     return (
         <Box pl={'84px'} pt={'60px'}>
@@ -60,27 +57,28 @@ function Computer() {
                                     </Box>
                                 </HStack>
                                 <Box px={'8px'} py={'6px'} bg={'#38A169'} borderRadius={'4px'}>
-                                    <Text fontWeight={'semibold'} color={'white'} letterSpacing={'1.5px'} fontSize={'14px'}>CONNECTED</Text>
+                                    <Text fontWeight={'semibold'} color={'white'} letterSpacing={'1.5px'}
+                                          fontSize={'14px'}>CONNECTED</Text>
                                 </Box>
                             </VStack>
                         }
                         <HStack>
-                        <Text
-                            color={'white'}
-                            fontWeight={'medium'}
-                            fontSize={'12px'}
-                        >
-                            {instanceStore.machine?.name}
-                        </Text>
-                        {
-                            isRunning &&
-                            <Box h={'12px'} w={'12px'} bg={'#275B3F'} borderRadius={'6px'}>
-                                <Center h={'full'}>
-                                    <Box h={'6px'} w={'6px'} bg={'#38A169'}  borderRadius={'3px'}/>
-                                </Center>
-                            </Box>
-                        }
-                    </HStack>
+                            <Text
+                                color={'white'}
+                                fontWeight={'medium'}
+                                fontSize={'12px'}
+                            >
+                                {instanceStore.machine?.name}
+                            </Text>
+                            {
+                                isRunning &&
+                                <Box h={'12px'} w={'12px'} bg={'#275B3F'} borderRadius={'6px'}>
+                                    <Center h={'full'}>
+                                        <Box h={'6px'} w={'6px'} bg={'#38A169'} borderRadius={'3px'}/>
+                                    </Center>
+                                </Box>
+                            }
+                        </HStack>
                     </VStack>
                 </VStack>
             </Box>
