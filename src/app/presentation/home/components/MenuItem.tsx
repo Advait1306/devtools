@@ -11,7 +11,8 @@ export function MenuItem(props: any) {
     return (
         <Text fontWeight={'semibold'}
               color={isSelected ? 'white' : '#767676'}
-              fontSize={'16px'}
+              fontSize={isSelected ? '24px' : '16px'}
+              letterSpacing={isSelected ? '-1px' : '-.5px'}
               as={'div'}
               onClick={() => setSelectedTab(id)}>
             {name}
