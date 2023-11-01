@@ -40,7 +40,9 @@ const createWindow = () => {
   }
 
   // Open the DevTools.
-  mainWindow.webContents.openDevTools();
+  if(!app.isPackaged) {
+    mainWindow.webContents.openDevTools();
+  }
 };
 
 const gotTheLock = app.requestSingleInstanceLock();

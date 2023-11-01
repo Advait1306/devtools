@@ -57,7 +57,7 @@ export async function launchRemoteVSCode(event: Electron.IpcMainInvokeEvent, ...
                             console.log('stderr', stderr)
 
                             console.log('attempting vsc run')
-                            exec('code --folder-uri "vscode-remote://ssh-remote+developer/home/developer"', (err, stdout, stderr) => {
+                            exec('export PATH=$PATH:/usr/local/bin;code --folder-uri "vscode-remote://ssh-remote+developer/home/developer"', (err, stdout, stderr) => {
                                 console.log('vsc run')
                                 console.log('err', err)
                                 console.log('stdout', stdout)
@@ -66,7 +66,7 @@ export async function launchRemoteVSCode(event: Electron.IpcMainInvokeEvent, ...
                         })
                     } else {
                         console.log('attempting vsc run')
-                        exec('code --folder-uri "vscode-remote://ssh-remote+developer/home/developer"', (err, stdout, stderr) => {
+                        exec('export PATH=$PATH:/usr/local/bin;code --folder-uri "vscode-remote://ssh-remote+developer/home/developer"', (err, stdout, stderr) => {
                             console.log('vsc run')
                             console.log('err', err)
                             console.log('stdout', stdout)

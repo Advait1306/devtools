@@ -11,5 +11,5 @@ contextBridge.exposeInMainWorld('electron', {
         return () => ipcRenderer.removeListener('ssh-disconnected', callback)
     },
     launchRemoteVSC: (ip: string) => ipcRenderer.invoke('launch-remote-vsc', ip),
-    copyToClipboard: (text: string) => ipcRenderer.invoke('copy-to-clipboard', text)
+    copyToClipboard: (text: string) => ipcRenderer.invoke('copy-to-clipboard', text),
 })

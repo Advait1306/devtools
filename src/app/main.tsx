@@ -2,7 +2,6 @@ import { createRoot } from 'react-dom/client';
 import "reflect-metadata";
 import {container} from "tsyringe";
 
-
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
 import App from "./presentation/App";
