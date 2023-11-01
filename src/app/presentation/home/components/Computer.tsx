@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {Box, Center, HStack, Icon, Text, VStack} from "@chakra-ui/react";
 import {IoPlay, IoStop} from "react-icons/io5";
 import InstanceEngine from "../../../application/instance/instance.engine";
@@ -9,11 +9,18 @@ import {FiCopy} from "react-icons/fi";
 function Computer() {
     const instanceEngine = container.resolve(InstanceEngine);
     const instanceStore = InstanceEngine.useInstanceStore();
-    const isRunning = instanceStore.machine?.status === "RUNNING";
-    const isConnected = instanceStore.connection?.status === "CONNECTED";
-    const isLoading = instanceStore.machine?.status !== "RUNNING" && instanceStore.machine?.status !== "TERMINATED";
+
+    const machineState = instanceStore.machine?.status;
+    const connectionState = instanceStore.connection?.status;
+
+    const isRunning = machineState === "RUNNING";
+    const isConnected = connectionState === "CONNECTED";
+    const [isLoading, setIsLoading] = useState(false);
 
     const powerButtonHandler = () => {
+
+        setIsLoading(true)
+
         if (!isRunning) {
             instanceEngine.startInstance();
         } else {
@@ -21,7 +28,16 @@ function Computer() {
         }
     }
 
-    const copyIpHandler = () => {}
+    useEffect(() => {
+        if(machineState === "TERMINATED" || machineState === "RUNNING") {
+            setIsLoading(false)
+        }
+    }, [machineState])
+
+    const copyIpHandler = () => {
+        // @ts-ignore
+        window.electron.copyToClipboard(instanceStore.machine?.ip);
+    }
 
     return (
         <Box pl={'84px'} pt={'60px'}>

@@ -1,8 +1,9 @@
 import { app, BrowserWindow, ipcMain } from 'electron';
 import path from 'path';
 import process from "process";
-import { spawn, exec } from 'child_process';
+import { exec } from 'child_process';
 import {connectViaSSH, createSSHKey, launchRemoteVSCode} from "./app/helpers/shell/instance";
+import {copyToClipboard} from "./app/helpers/clipboard";
 
 export let mainWindow: BrowserWindow | null;
 
@@ -77,6 +78,8 @@ if (!gotTheLock) {
     ipcMain.handle('connect-to-instance', connectViaSSH)
 
     ipcMain.handle('launch-remote-vsc', launchRemoteVSCode)
+
+    ipcMain.handle('copy-to-clipboard', copyToClipboard)
 
     createWindow()
   })

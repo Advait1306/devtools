@@ -79,20 +79,22 @@ export default class InstanceEngine {
             }
         })
 
-        const publicKey = await this.createSSHKey();
-        console.log('publicKey', publicKey)
+        setTimeout(async () => {
+            const publicKey = await this.createSSHKey();
+            console.log('publicKey', publicKey)
 
-        await this.addSSHKey(publicKey);
-        console.log('added-ssh-key')
+            await this.addSSHKey(publicKey);
+            console.log('added-ssh-key')
 
-        console.log('connecting-to-instance')
-        await this.connectSSH();
+            console.log('connecting-to-instance')
+            await this.connectSSH();
 
-        this.instanceStore.setState({
-            connection: {
-                status: 'CONNECTED'
-            }
-        })
+            this.instanceStore.setState({
+                connection: {
+                    status: 'CONNECTED'
+                }
+            })
+        }, 5000);
     }
 
     private async createSSHKey() {

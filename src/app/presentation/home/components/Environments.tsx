@@ -4,7 +4,7 @@ import {container} from "tsyringe";
 import InstanceEngine from "../../../application/instance/instance.engine";
 
 // @ts-ignore
-import VscIcon from '../../../assets/vscode_icon.png';
+import VscIcon from '../../../assets/images/vscode_icon.png';
 
 function Environment() {
 

@@ -1,11 +1,16 @@
 import React from 'react';
 import {Box, Button, Icon, IconButton, Menu, MenuButton, MenuItem, MenuList, Text} from "@chakra-ui/react";
 import {MdPerson} from 'react-icons/md'
-import {AddIcon, HamburgerIcon} from "@chakra-ui/icons";
-import {FcLeave} from "react-icons/fc";
+import {HamburgerIcon} from "@chakra-ui/icons";
 import {IoLogOutOutline} from "react-icons/io5";
+import AccountEngine from "../../../application/account/account.engine";
+import {container} from "tsyringe";
 
 function ProfileTab() {
+
+    const accountStore = AccountEngine.useAccountStore();
+    const accountEngine = container.resolve(AccountEngine);
+
     return (
         <Box display={'flex'}
              flexDirection={'row'}
@@ -26,7 +31,7 @@ function ProfileTab() {
                     alignItems={'center'}>
                     <Icon as={MdPerson}/>
                 </Box>
-                <Text color={'white'} fontWeight={'bold'}>advait</Text>
+                <Text color={'white'} fontWeight={'bold'}>{accountStore.user.name}</Text>
             </Box>
 
             <Menu>
@@ -40,7 +45,7 @@ function ProfileTab() {
                     _hover={{bg: 'transparent'}}
                 />
                 <MenuList>
-                    <MenuItem icon={<IoLogOutOutline />}>
+                    <MenuItem icon={<IoLogOutOutline />} onClick={accountEngine.logout}>
                         Logout
                     </MenuItem>
                 </MenuList>
