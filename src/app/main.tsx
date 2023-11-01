@@ -9,6 +9,7 @@ import AccountEngine from "./application/account/account.engine";
 
 import {ChakraProvider, extendTheme} from '@chakra-ui/react'
 import Network from "./infrastructure/core/network";
+import AnalyticsEngine from "./application/analytics/analytics.engine";
 
 
 // Your web app's Firebase configuration
@@ -21,11 +22,14 @@ const firebaseConfig = {
     appId: "1:508745707513:web:4c258a428d6523870f9728"
 };
 
+
+console.log('initialising app')
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 
 const resolveEager = () => {
     container.resolve(Network)
+    container.resolve(AnalyticsEngine)
     container.resolve(AccountEngine)
 }
 resolveEager();

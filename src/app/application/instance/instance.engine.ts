@@ -2,12 +2,15 @@ import {container, singleton} from "tsyringe";
 import InstanceRepository from "../../infrastructure/instance/instance.repository";
 import {createStore, useStore} from "zustand";
 import {InstanceState} from "./instance.state";
+import AnalyticsEngine from "../analytics/analytics.engine";
 
 
 @singleton()
 export default class InstanceEngine {
     instanceStore = createStore<InstanceState>(() => ({initialized: false}));
     instanceRepository = container.resolve(InstanceRepository);
+
+    analyticsEngine = container.resolve(AnalyticsEngine);
 
     constructor() {
         this.initialize();
@@ -54,6 +57,7 @@ export default class InstanceEngine {
 
     async startInstance() {
         try {
+            this.analyticsEngine.trackEvent('start_instance');
             await this.instanceRepository.startInstance();
             await this.getInstanceInfo();
         } catch (e) {
@@ -63,6 +67,7 @@ export default class InstanceEngine {
 
     async stopInstance() {
         try {
+            this.analyticsEngine.trackEvent('stop_instance');
             await this.instanceRepository.stopInstance();
             await this.getInstanceInfo();
         } catch (e) {
@@ -119,6 +124,7 @@ export default class InstanceEngine {
     }
 
     async launchRemoteVSC() {
+        this.analyticsEngine.trackEvent('launch_vsc');
         await this.instanceRepository.launchRemoteVSC(this.instanceStore.getState().machine.ip);
     }
 

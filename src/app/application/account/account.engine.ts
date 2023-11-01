@@ -1,17 +1,21 @@
 import {container, singleton} from "tsyringe";
-import {getAuth, sendSignInLinkToEmail, signInWithEmailLink, signOut} from "firebase/auth";
+import {getAuth, sendSignInLinkToEmail, signInWithEmailLink, signOut, Auth} from "firebase/auth";
 import {AccountState} from "./account.state";
 import {createStore, useStore} from "zustand";
 import AccountRepository from "../../infrastructure/account/account.repository";
+import AnalyticsEngine from "../analytics/analytics.engine";
 
 
 @singleton()
-export default class AccountEngine {
+export default class  AccountEngine {
     accountStore = createStore<AccountState>(() => ({isInitialized: false}));
-    auth = getAuth();
+    auth: Auth;
     accountRepository = container.resolve(AccountRepository);
+    analyticsEngine = container.resolve(AnalyticsEngine)
 
     constructor() {
+        console.log('account-engine-constructor')
+        this.auth = getAuth()
         this.setupLoginLinkHandler();
         this.initialize();
     }
@@ -38,8 +42,10 @@ export default class AccountEngine {
                         email: user?.email,
                     },
                 })
+                this.analyticsEngine.setUser(user.uid);
                 this.getUserData();
             } else {
+                this.analyticsEngine.reset();
                 this.accountStore.setState({
                     user: undefined,
                 })
@@ -87,6 +93,9 @@ export default class AccountEngine {
 
     setName = async (name: string) => {
         try {
+
+
+
             const response = await this.accountRepository.updateUserData({name})
             this.accountStore.setState({
                 user: {
