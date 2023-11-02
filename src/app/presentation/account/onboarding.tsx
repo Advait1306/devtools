@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {Box, Button, Center, FormLabel, Input, Text} from "@chakra-ui/react";
+import {Box, Button, Center, Input, Text, VStack} from "@chakra-ui/react";
 import AccountEngine from "../../application/account/account.engine";
 import {container} from "tsyringe";
 
@@ -62,66 +62,72 @@ function Onboarding() {
         setIsLoading(false);
     }
 
-    if (!step) {
+    if (step == undefined) {
         return <></>
     }
 
 
     if (step == 0) {
         return (
-            <Center h={'full'} display={'flex'} flexDirection={'column'}>
-                <Box>
-                    <Box marginY={10}>
-                        <FormLabel color={'white'}>name</FormLabel>
-                        <Input
-                            variant='Filled'
-                            value={name}
-                            onChange={(event) => setName(event.target.value)}
-                        />
-                    </Box>
-                    <Box marginY={10}>
-                        <FormLabel color={'white'}>phone number</FormLabel>
-                        <Input
-                            variant='Filled'
-                            value={phoneNumber}
-                            onChange={(event) => setPhoneNumber(event.target.value)}
-                            type={'tel'}
-                        />
-                    </Box>
+            <Center h={'full'}>
+                <Box h={'500px'} w={'460px'} bg={'brand.primary'} borderRadius={'16px'}>
+                    <VStack h={'full'} justifyContent={'space-evenly'}>
+                        <Box>
+                            <VStack marginY={10} gap={'8px'} alignItems={'flex-start'}>
+                                <Text color={'white'} fontWeight={'medium'} fontSize={'14px'}>Name</Text>
+                                <Input
+                                    variant='Filled'
+                                    value={name}
+                                    onChange={(event) => setName(event.target.value)}
+                                />
+                            </VStack>
+                            <VStack marginY={10} gap={'8px'} alignItems={'flex-start'}>
+                                <Text color={'white'} fontWeight={'medium'} fontSize={'14px'}>Phone number</Text>
+                                <Input
+                                    variant='Filled'
+                                    value={phoneNumber}
+                                    onChange={(event) => setPhoneNumber(event.target.value)}
+                                    type={'tel'}
+                                />
+                            </VStack>
+                        </Box>
+                        <Button isLoading={isLoading} onClick={setNameAndPhoneNumber}>
+                            next
+                        </Button>
+                    </VStack>
                 </Box>
-                <Button isLoading={isLoading} onClick={setNameAndPhoneNumber}>
-                    next
-                </Button>
             </Center>
         );
     }
 
     if (step == 1) {
         return (
-            <Center h={'full'} display={'flex'} flexDirection={'column'}>
-                <Box>
-                    <Box marginY={10}>
-                        <FormLabel color={'white'}>job</FormLabel>
-                        <Input
-                            variant='Filled'
-                            placeholder='Filled'
-                            value={job}
-                            onChange={(event) => setJob(event.target.value)}
-                        />
-                    </Box>
-                    <Box marginY={10}>
-                        <FormLabel color={'white'}>phone number</FormLabel>
-                        <Input
-                            variant='Filled'
-                            placeholder='Filled'
-                            value={company}
-                            onChange={(event) => setCompany(event.target.value)}
-                        />
-                    </Box>
+            <Center h={'full'}>
+                <Box h={'500px'} w={'460px'} bg={'brand.primary'} borderRadius={'16px'}>
+                    <VStack h={'full'} justifyContent={'space-evenly'}>
+                        <Box>
+                            <VStack marginY={10} gap={'8px'} alignItems={'flex-start'}>
+                                <Text color={'white'} fontWeight={'medium'} fontSize={'14px'}>Job</Text>
+                                <Input
+                                    variant='Filled'
+                                    value={job}
+                                    onChange={(event) => setJob(event.target.value)}
+                                />
+                            </VStack>
+                            <VStack marginY={10} gap={'8px'} alignItems={'flex-start'}>
+                                <Text color={'white'} fontWeight={'medium'} fontSize={'14px'}>Phone number</Text>
+                                <Input
+                                    variant='Filled'
+                                    value={company}
+                                    onChange={(event) => setCompany(event.target.value)}
+                                />
+                            </VStack>
+                        </Box>
+                        <Button isLoading={isLoading} onClick={setJobAndCompany}>
+                            next
+                        </Button>
+                    </VStack>
                 </Box>
-                <Button isLoading={isLoading} onClick={setJobAndCompany}>
-                    next
-                </Button>
             </Center>
         );
     }
@@ -130,9 +136,9 @@ function Onboarding() {
         return (
             <Center h={'full'} display={'flex'} flexDirection={'column'}>
                 <Box marginY={10}>
-                    <Text color={'white'}>Devtools is still under beta, hope you report all your feedback so we can make
-                        it
-                        better</Text>
+                    <Text color={'white'}>
+                        Devtools is still under beta, hope you report all your feedback so we can make it better
+                    </Text>
                 </Box>
                 <Button onClick={completeOnboarding}>continue</Button>
             </Center>

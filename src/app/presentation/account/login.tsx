@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {Box, Button, Center, FormLabel, Heading, Input, Text} from "@chakra-ui/react";
+import {Box, Button, Center, Input, Text, VStack} from "@chakra-ui/react";
 import {container} from "tsyringe";
 import AccountEngine from "../../application/account/account.engine";
 
@@ -27,33 +27,30 @@ function LoginPage() {
 
     if (linkSent) {
         return (<Center h={'full'}>
-            <Text color={'white'}>You’ll find the login link in an email we’ve sent you. Make sure you access it from this computer. </Text>
+            <Text color={'white'}>You’ll find the login link in an email we’ve sent you. Make sure you access it from
+                this computer. </Text>
         </Center>)
     }
 
     return (
         <Center h={'full'}>
-            <Box
-                display={'flex'}
-                flexDirection={'column'}
-                alignItems={'center'}
-                justifyContent={'center'}
-            >
-                <Heading color={'white'}>devtools</Heading>
-                <Box marginY={10}>
-                    <FormLabel color={'white'}>email</FormLabel>
-                    <Input
-                        variant='Filled'
-                        placeholder='Filled'
-                        value={email}
-                        onChange={(event) => setEmail(event.target.value)}
-                        type={'email'}
-                    />
-                </Box>
-                <Button isLoading={isLoading} onClick={sendLoginLink}>send login link</Button>
+            <Box h={'500px'} w={'460px'} bg={'brand.primary'} borderRadius={'16px'}>
+                <Center h={'full'}>
+                    <VStack h={'full'} justifyContent={'space-evenly'}>
+                        <VStack marginY={10} gap={'8px'} alignItems={'flex-start'}>
+                            <Text color={'white'} fontWeight={'medium'} fontSize={'14px'}>Email</Text>
+                            <Input
+                                variant='Filled'
+                                value={email}
+                                onChange={(event) => setEmail(event.target.value)}
+                                type={'email'}
+                            />
+                        </VStack>
+                        <Button isLoading={isLoading} onClick={sendLoginLink}>send login link</Button>
+                    </VStack>
+                </Center>
             </Box>
         </Center>
-
     );
 }
 

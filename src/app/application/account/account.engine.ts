@@ -1,5 +1,5 @@
 import {container, singleton} from "tsyringe";
-import {getAuth, sendSignInLinkToEmail, signInWithEmailLink, signOut, Auth} from "firebase/auth";
+import {Auth, getAuth, sendSignInLinkToEmail, signInWithEmailLink, signOut} from "firebase/auth";
 import {AccountState} from "./account.state";
 import {createStore, useStore} from "zustand";
 import AccountRepository from "../../infrastructure/account/account.repository";
@@ -7,8 +7,8 @@ import AnalyticsEngine from "../analytics/analytics.engine";
 
 
 @singleton()
-export default class  AccountEngine {
-    accountStore = createStore<AccountState>(() => ({isInitialized: false}));
+export default class AccountEngine {
+    accountStore = createStore<AccountState>(() => ({isInitialized: false, userDataFetched: false}));
     auth: Auth;
     accountRepository = container.resolve(AccountRepository);
     analyticsEngine = container.resolve(AnalyticsEngine)
@@ -66,7 +66,7 @@ export default class  AccountEngine {
         }
 
         try {
-            const response = await sendSignInLinkToEmail(this.auth, email, actionCodeSettings);
+            await sendSignInLinkToEmail(this.auth, email, actionCodeSettings);
             return true;
         } catch (e) {
             console.log(e)
@@ -84,7 +84,8 @@ export default class  AccountEngine {
             this.accountStore.setState({
                 user: {
                     ...data
-                }
+                },
+                userDataFetched: true
             });
         } catch (e) {
             console.log(e)
@@ -93,9 +94,6 @@ export default class  AccountEngine {
 
     setName = async (name: string) => {
         try {
-
-
-
             const response = await this.accountRepository.updateUserData({name})
             this.accountStore.setState({
                 user: {
@@ -122,7 +120,7 @@ export default class  AccountEngine {
         }
     }
 
-    setNameAndPhoneNumber = async ({name, phoneNumber}: {name: string, phoneNumber: string}) => {
+    setNameAndPhoneNumber = async ({name, phoneNumber}: { name: string, phoneNumber: string }) => {
         try {
             const response = await this.accountRepository.updateUserData({name, phone_number: phoneNumber})
             this.accountStore.setState({
@@ -164,7 +162,7 @@ export default class  AccountEngine {
         }
     }
 
-    setJobAndCompany = async ({job, company}: {job: string, company: string}) => {
+    setJobAndCompany = async ({job, company}: { job: string, company: string }) => {
         try {
             const response = await this.accountRepository.updateUserData({job, company})
             this.accountStore.setState({

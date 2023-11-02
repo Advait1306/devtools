@@ -14,9 +14,10 @@ function App() {
                 accountStore.isInitialized &&
                 (!accountStore.user ?
                     <Login/>
-                    : accountStore.user.onboarding_complete
-                        ? <Home/>
-                        : <Onboarding/>)
+                    : accountStore.userDataFetched ? (accountStore.user.onboarding_complete)
+                            ? <Home/>
+                            : <Onboarding/>
+                        : <></>)
             }
         </Background>
     );
