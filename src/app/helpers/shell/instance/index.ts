@@ -1,80 +1,28 @@
-import {exec, spawn} from "child_process";
-import {mainWindow} from "../../../../main";
+import ShellEngine from "../shell.engine";
 
-export async function createSSHKey(event: Electron.IpcMainInvokeEvent, ...args: any[]) {
-    return new Promise((resolve, reject) => {
-        exec('rm -rf ~/.ssh/tic-devtools-ssh', (err, stdout, stderr) => {
-            exec('ssh-keygen -f ~/.ssh/tic-devtools-ssh -N \'\' -C developer', (err, stdout, stderr) => {
-                exec('cat ~/.ssh/tic-devtools-ssh.pub', (err, stdout, stderr) => {
-                    resolve(stdout)
-                });
-            })
-        })
-    })
+const shellEngine = new ShellEngine();
+
+export async function createNewSSHKey(event: Electron.IpcMainInvokeEvent, ...args: any[]) {
+    const [o, s, e] = await shellEngine.removeSSHKey();
+    const [o1, s1, e1] = await shellEngine.createSSHKey();
+    const [o2, s2, e2] = await shellEngine.readPublicKey();
+
+    return o2;
 }
 
 export async function connectViaSSH(event: Electron.IpcMainInvokeEvent, ...args: any[]) {
-    const shell = spawn('ssh', ['-i', '~/.ssh/tic-devtools-ssh', `developer@${args[0]}`]);
-
-    shell.stdout.on('data', data => {
-        console.log(`ssh-stdout:\n${data}`);
-    })
-    shell.stderr.on("data", (data) => {
-        console.log(`ssh-stdout: ${data}`);
-    });
-
-    shell.on('exit', () => {
-        console.log('ssh-exited')
-        mainWindow.webContents.send('ssh-disconnected')
-    })
+    shellEngine.connectSSH({ip: args[0]});
 }
 
 export async function launchRemoteVSCode(event: Electron.IpcMainInvokeEvent, ...args: any[]) {
-    const ip = args[0]
 
-    exec('rm -rf ~/.ssh/tic_config', (err, stdout, stderr) => {
-        console.log('err', err)
-        console.log('stdout', stdout)
-        console.log('stderr', stderr)
+    const [o, s, e] = await shellEngine.removeSSHConfig();
+    const [o1, s1, e1] = await shellEngine.createSSHConfig({ip: args[0]});
+    const [o2, s2, e2] = await shellEngine.readSSHConfig();
 
-        exec('touch ~/.ssh/tic_config', (err, stdout, stderr) => {
-            console.log('err', err)
-            console.log('stdout', stdout)
-            console.log('stderr', stderr)
+    if(!o2.includes('Include "tic_config"')) {
+        const [o3, s3, e3] = await shellEngine.prependSSHConfig();
+    }
 
-            exec(`echo "Host developer \n  HostName ${ip} \n  User developer \n  IdentityFile ~/.ssh/tic-devtools-ssh" | cat > ~/.ssh/tic_config`, (err, stdout, stderr) => {
-                console.log('err', err)
-                console.log('stdout', stdout)
-                console.log('stderr', stderr)
-
-                exec('cat ~/.ssh/config', (err, stdout, stderr) => {
-                    if(!stdout.includes('Include "tic_config"')) {
-                        console.log('doesnt include')
-
-                        exec('echo "Include \\"tic_config\\"" | cat - ~/.ssh/config > tempfile && mv tempfile ~/.ssh/config', (err, stdout, stderr) => {
-                            console.log('err', err)
-                            console.log('stdout', stdout)
-                            console.log('stderr', stderr)
-
-                            console.log('attempting vsc run')
-                            exec('export PATH=$PATH:/usr/local/bin;code --folder-uri "vscode-remote://ssh-remote+developer/home/developer"', (err, stdout, stderr) => {
-                                console.log('vsc run')
-                                console.log('err', err)
-                                console.log('stdout', stdout)
-                                console.log('stderr', stderr)
-                            })
-                        })
-                    } else {
-                        console.log('attempting vsc run')
-                        exec('export PATH=$PATH:/usr/local/bin;code --folder-uri "vscode-remote://ssh-remote+developer/home/developer"', (err, stdout, stderr) => {
-                            console.log('vsc run')
-                            console.log('err', err)
-                            console.log('stdout', stdout)
-                            console.log('stderr', stderr)
-                        })
-                    }
-                })
-            })
-        })
-    });
+    const [o4, s4, e4] = await shellEngine.launchRemoteVSCode({ip: args[0]});
 }
