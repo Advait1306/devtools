@@ -31,7 +31,7 @@ export default class ShellEngine {
         const os = this.checkAndThrowUnsupportedOS();
         const command = os === OS.darwin
             ? 'rm -rf ~/.ssh/tic-devtools-ssh'
-            : 'del /f /s /q ~/.ssh/tic-devtools-ssh';
+            : 'Remove-Item -Path ~/.ssh/tic-devtools-ssh -Force';
 
         return this.exec(command)
     }
@@ -40,7 +40,7 @@ export default class ShellEngine {
         const os = this.checkAndThrowUnsupportedOS();
         const command = os === OS.darwin
             ? "ssh-keygen -f ~/.ssh/tic-devtools-ssh -N '' -C developer"
-            : "ssh-keygen -f \"$env:USERPROFILE/.ssh/tic-devtools-ssh\" -C \"developer\" -N ''";
+            : "ssh-keygen -f $env:USERPROFILE/.ssh/tic-devtools-ssh -C \"developer\" -N ''";
 
         return this.exec(command)
     }
@@ -58,7 +58,7 @@ export default class ShellEngine {
         const os = this.checkAndThrowUnsupportedOS();
         const command = os === OS.darwin
             ? 'rm -rf ~/.ssh/tic_config'
-            : 'del /f /s /q ~/.ssh/tic_config';
+            : 'Remove-Item -Path ~/.ssh/tic_config -Force';
 
         return this.exec(command)
     }
@@ -73,7 +73,7 @@ export default class ShellEngine {
               HostName ${ip}
               User developer
               IdentityFile ~/.ssh/tic-devtools-ssh
-            "@ | Out-File -FilePath "$env:USERPROFILE\\Documents\\ssh_config" -Encoding utf8
+            "@ | Out-File -FilePath "$env:USERPROFILE/.ssh/tic_config" -Encoding utf8
             `
 
         return this.exec(command)
@@ -83,7 +83,7 @@ export default class ShellEngine {
         const os = this.checkAndThrowUnsupportedOS();
         const command = os === OS.darwin
             ? 'cat ~/.ssh/config'
-            : 'Get-Content -Path "$env:USERPROFILE\\Documents\\ssh_config"';
+            : 'Get-Content -Path "$env:USERPROFILE/.ssh/config"';
 
         return this.exec(command)
     }
@@ -92,11 +92,7 @@ export default class ShellEngine {
         const os = this.checkAndThrowUnsupportedOS();
         const command = os === OS.darwin
             ? 'echo "Include \\"tic_config\\"" | cat - ~/.ssh/config > tempfile && mv tempfile ~/.ssh/config'
-            : `
-            @"
-            Include "tic_config"
-            "@ | Out-File -FilePath "$env:USERPROFILE\\Documents\\ssh_config" -Encoding utf8
-            `
+            : `Set-Content -Path "$env:USERPROFILE\.ssh\config" -Value $("Include ""tic_config""" + [Environment]::NewLine + (Get-Content -Path "$env:USERPROFILE\.ssh\config" -Raw)) -Encoding utf8`
 
         return this.exec(command)
     }
@@ -120,7 +116,7 @@ export default class ShellEngine {
         const os = this.checkAndThrowUnsupportedOS();
         const command = os === OS.darwin
             ? `export PATH=$PATH:/usr/local/bin;code --folder-uri "vscode-remote://ssh-remote+developer/home/developer"`
-            : `export PATH=$PATH:/usr/local/bin;code --folder-uri "vscode-remote://ssh-remote+developer/home/developer"`;
+            : `code --folder-uri "vscode-remote://ssh-remote+developer/home/developer"`;
 
         return this.exec(command)
     }
