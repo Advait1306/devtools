@@ -1,15 +1,16 @@
-import { createRoot } from 'react-dom/client';
+import {createRoot} from 'react-dom/client';
 import "reflect-metadata";
 import {container} from "tsyringe";
 
 // Import the functions you need from the SDKs you need
-import { initializeApp } from "firebase/app";
+import {initializeApp} from "firebase/app";
 import App from "./presentation/App";
 import AccountEngine from "./application/account/account.engine";
 
-import {ChakraProvider, extendTheme} from '@chakra-ui/react'
+import {ChakraProvider, extendTheme, Text} from '@chakra-ui/react'
 import Network from "./infrastructure/core/network";
 import AnalyticsEngine from "./application/analytics/analytics.engine";
+import React from "react";
 
 
 // Your web app's Firebase configuration
@@ -49,6 +50,11 @@ const theme = extendTheme({
         heading: 'Geist',
         body: 'Geist'
     }
+})
+
+// @ts-ignore
+window.electron.print((event: any, args: any) => {
+    console.log(args)
 })
 
 root.render(

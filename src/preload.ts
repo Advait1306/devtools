@@ -12,4 +12,6 @@ contextBridge.exposeInMainWorld('electron', {
     },
     launchRemoteVSC: (ip: string) => ipcRenderer.invoke('launch-remote-vsc', ip),
     copyToClipboard: (text: string) => ipcRenderer.invoke('copy-to-clipboard', text),
+    getAppVersion: () => ipcRenderer.invoke('get-app-version'),
+    print: (callback: (event: any, ...args: any[]) => void) => ipcRenderer.on('print', callback),
 })
