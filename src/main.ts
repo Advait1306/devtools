@@ -10,10 +10,6 @@ import {log} from "electron-log";
 
 if (app.isPackaged) {
     updateElectronApp({
-        updateSource: {
-            type: UpdateSourceType.ElectronPublicUpdateService,
-            repo: 'sixhuman/devtools-release'
-        },
         logger: {
             info: (message: string) => {
                 console.log(message)
