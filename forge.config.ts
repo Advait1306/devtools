@@ -62,6 +62,7 @@ const config: ForgeConfig = {
                     owner: 'sixhuman',
                     name: 'devtools-release'
                 },
+                authToken: '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'
             }
         }
     ]
