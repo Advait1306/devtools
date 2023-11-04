@@ -40,7 +40,7 @@ export default class ShellEngine {
         const os = this.checkAndThrowUnsupportedOS();
         const command = os === OS.darwin
             ? "ssh-keygen -f ~/.ssh/tic-devtools-ssh -N '' -C developer"
-            : "ssh-keygen -f $env:USERPROFILE/.ssh/tic-devtools-ssh -C \"developer\" -N ''";
+            : "ssh-keygen -f $env:USERPROFILE/.ssh/tic-devtools-ssh -C \"developer\" -N '\"\"'";
 
         return this.exec(command)
     }
@@ -67,14 +67,7 @@ export default class ShellEngine {
         const os = this.checkAndThrowUnsupportedOS();
         const command = os === OS.darwin
             ? `echo "Host developer \n  HostName ${ip} \n  User developer \n  IdentityFile ~/.ssh/tic-devtools-ssh" | cat > ~/.ssh/tic_config`
-            : `
-            @"
-            Host developer
-              HostName ${ip}
-              User developer
-              IdentityFile ~/.ssh/tic-devtools-ssh
-            "@ | Out-File -FilePath "$env:USERPROFILE/.ssh/tic_config" -Encoding utf8
-            `
+            : `"\`nHost developer\`n  HostName ${ip}\`n  User developer\`n  IdentityFile ~/.ssh/tic-devtools-ssh\`n" | Out-File -FilePath "$env:USERPROFILE/.ssh/tic_config" -Encoding utf8`
 
         return this.exec(command)
     }
@@ -92,7 +85,7 @@ export default class ShellEngine {
         const os = this.checkAndThrowUnsupportedOS();
         const command = os === OS.darwin
             ? 'echo "Include \\"tic_config\\"" | cat - ~/.ssh/config > tempfile && mv tempfile ~/.ssh/config'
-            : `Set-Content -Path "$env:USERPROFILE\.ssh\config" -Value $("Include ""tic_config""" + [Environment]::NewLine + (Get-Content -Path "$env:USERPROFILE\.ssh\config" -Raw)) -Encoding utf8`
+            : `Set-Content -Path "$env:USERPROFILE/.ssh/config" -Value $("Include ""tic_config""" + [Environment]::NewLine + (Get-Content -Path "$env:USERPROFILE/.ssh/config" -Raw)) -Encoding utf8`
 
         return this.exec(command)
     }
@@ -121,15 +114,46 @@ export default class ShellEngine {
         return this.exec(command)
     }
 
+    test() {
+        // this.spawn('ls', [], console.log, () => console.log('exit'))
+        // this.removeSSHKey();
+        // this.createSSHKey();
+    }
+
     private spawn(command: string, args: string[], onData: (data: string) => void, onExit: () => void) {
-        const shell = spawn(command, args);
-        shell.on('data', onData)
-        shell.on('exit', onExit)
+        const os = this.checkOS()
+        const shell = spawn(command, args, os === OS.win32 ? {'shell':'powershell.exe'} : {});
+        shell.stdout.on('data', (data) => {
+            const dataString = data.toString();
+            // const dataJson = eval(`(${dataString})`);
+            console.log('spawn-data')
+            console.log(dataString)
+            onData(data)
+        })
+        shell.stderr.on('data', (data) => {
+            const dataString = data.toString();
+            // const dataJson = eval(`(${dataString})`);
+            console.log('spawn-err')
+            console.log(dataString)
+            onData(data)
+        })
+        shell.on('exit', (data) => {
+            console.log('spawn-exit')
+            console.log(data)
+            onExit()
+        })
     }
 
     private exec(command: string): Promise<[string, string, Error]> {
         return new Promise((resolve) => {
-            exec(command, (err, stdout, stderr) => {
+            const os = this.checkOS()
+            exec(command, os === OS.win32 ? {'shell':'powershell.exe'} : {}, (err, stdout, stderr) => {
+                console.log('========================================')
+                console.log(command)
+                console.log(stdout)
+                console.log(stderr)
+                console.log(err)
+                console.log('========================================')
                 resolve([stdout, stderr, err]);
             })
         })

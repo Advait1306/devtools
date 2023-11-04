@@ -18,11 +18,6 @@ export default class InstanceEngine {
 
     private async initialize() {
 
-        // window.electron.openVSCodeRemoteConfig();
-        // window.electron.generateSSHKey();
-        // const res = (await window.electron.checkCode());
-        // console.log('res', res)
-
         await this.getInstanceInfo();
         setInterval(this.getInstanceInfo.bind(this), 5000)
 

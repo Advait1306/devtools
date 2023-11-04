@@ -24,7 +24,9 @@ const firebaseConfig = {
 };
 
 
-console.log('initialising app')
+// @ts-ignore
+window.electron.test()
+
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 

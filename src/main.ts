@@ -2,7 +2,7 @@ import {app, BrowserWindow, ipcMain} from 'electron';
 import path from 'path';
 import process from "process";
 import {exec} from 'child_process';
-import {connectViaSSH, createNewSSHKey, launchRemoteVSCode} from "./app/helpers/shell/instance";
+import {connectViaSSH, createNewSSHKey, launchRemoteVSCode, test} from "./app/helpers/shell/instance";
 import {copyToClipboard} from "./app/helpers/clipboard";
 import {updateElectronApp, UpdateSourceType} from "update-electron-app";
 import {log} from "electron-log";
@@ -81,13 +81,18 @@ if (!gotTheLock) {
     app.quit();
 } else {
     app.on('second-instance', (event, commandLine, workingDirectory) => {
+
+        if (process.platform == 'win32') {
+            // Keep only command line / deep linked arguments
+            const url = (commandLine[commandLine.length - 1])
+            mainWindow.webContents.send('link', url)
+          }
+
         if (mainWindow) {
             if (mainWindow.isMinimized()) {
                 mainWindow.restore();
             }
             mainWindow.focus();
-
-            // dialog.showErrorBox('Welcome Back', `You arrived from: ${commandLine.pop().slice(0, -1)}`)
         }
     });
 
@@ -116,6 +121,8 @@ if (!gotTheLock) {
         ipcMain.handle('get-app-version', () => {
             return app.getVersion();
         })
+
+        ipcMain.handle('test', test)
 
         createWindow()
     })

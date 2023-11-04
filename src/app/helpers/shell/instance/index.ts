@@ -26,3 +26,7 @@ export async function launchRemoteVSCode(event: Electron.IpcMainInvokeEvent, ...
 
     const [o4, s4, e4] = await shellEngine.launchRemoteVSCode({ip: args[0]});
 }
+
+export async function test() {
+    shellEngine.test()
+}
