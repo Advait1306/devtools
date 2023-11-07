@@ -7,6 +7,9 @@ function LoginPage() {
 
     const [email, setEmail] = useState('')
     const [linkSent, setLinkSent] = useState(false)
+
+    const [link, setLink] = useState('')
+
     const [error, setError] = useState('')
     const [isLoading, setIsLoading] = useState(false)
 
@@ -25,10 +28,23 @@ function LoginPage() {
         }
     }
 
+    const verifyLoginLink = async () => {
+        accountEngine.verifyLink({link})
+    }
+
     if (linkSent) {
         return (<Center h={'full'}>
-            <Text color={'white'}>You’ll find the login link in an email we’ve sent you. Make sure you access it from
-                this computer. </Text>
+            <VStack  maxW={'800px'}>
+            <Text color={'white'} textAlign={'center'}>You’ll find the login link in an email we’ve sent you. Make sure you access it from
+                this computer. If that doesn't work, you can paste the link here </Text>
+                <Input
+                    variant='Filled'
+                    value={link}
+                    onChange={(event) => setLink(event.target.value)}
+                    type={'email'}
+                />
+                <Button onClick={verifyLoginLink}>verify link</Button>
+            </VStack>
         </Center>)
     }
 
