@@ -13,6 +13,8 @@ export default class AccountEngine {
     accountRepository = container.resolve(AccountRepository);
     analyticsEngine = container.resolve(AnalyticsEngine)
 
+    email = ''
+
     constructor() {
         console.log('account-engine-constructor')
         this.auth = getAuth()
@@ -27,7 +29,7 @@ export default class AccountEngine {
             const loginUrl = url.replace('tic-devtools://', '')
             console.log('cleaned-login-url', loginUrl)
 
-            const response = await signInWithEmailLink(this.auth, 'advaitbansode4@gmail.com', loginUrl);
+            const response = await signInWithEmailLink(this.auth, this.email, loginUrl);
             console.log('login-response', response)
         });
         console.log('setup-login-link-handler')
@@ -67,11 +69,17 @@ export default class AccountEngine {
 
         try {
             await sendSignInLinkToEmail(this.auth, email, actionCodeSettings);
+            this.email = email
             return true;
         } catch (e) {
             console.log(e)
             return false;
         }
+    }
+
+    verifyLink = async ({link} : {link: string}) => {
+        const response = await signInWithEmailLink(this.auth, this.email, link)
+        console.log('login-response', response)
     }
 
     logout = async () => {
