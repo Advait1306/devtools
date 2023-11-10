@@ -1,7 +1,7 @@
 {
   "name": "devtools",
   "productName": "devtools",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Cloud developer tools to help you write code anywhere anywhere",
   "main": ".vite/build/main.js",
   "repository": {

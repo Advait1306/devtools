@@ -5,6 +5,7 @@ import {getAuth} from "firebase/auth";
 @singleton()
 export default class Network {
     http = axios.create({
+        // baseURL: 'http://localhost:3000',
         baseURL: 'https://api.sixhuman.com',
         headers: {
             'Content-Type': 'application/json',

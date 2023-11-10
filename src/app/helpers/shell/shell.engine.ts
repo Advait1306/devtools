@@ -1,4 +1,5 @@
 import process from "process";
+import {log} from "electron-log";
 import {exec, spawn} from "child_process";
 import {mainWindow} from "../../../main";
 
@@ -154,6 +155,13 @@ export default class ShellEngine {
                 console.log(stderr)
                 console.log(err)
                 console.log('========================================')
+
+                log('========================================')
+                log(command)
+                log(stdout)
+                log(stderr)
+                log(err)
+                log('========================================')
                 resolve([stdout, stderr, err]);
             })
         })
