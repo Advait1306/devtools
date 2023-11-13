@@ -4,7 +4,7 @@ import process from "process";
 import {exec} from 'child_process';
 import {connectViaSSH, createNewSSHKey, launchEmulator, launchRemoteVSCode, test} from "./app/helpers/shell/instance";
 import {copyToClipboard} from "./app/helpers/clipboard";
-import {updateElectronApp, UpdateSourceType} from "update-electron-app";
+import {updateElectronApp} from "update-electron-app";
 import {log} from "electron-log";
 
 
@@ -38,13 +38,13 @@ if (require('electron-squirrel-startup')) {
     app.quit();
 }
 
-if (process.defaultApp) {
-    if (process.argv.length >= 2) {
-        app.setAsDefaultProtocolClient('tic-devtools', process.execPath, [path.resolve(process.argv[1])]);
-    } else {
-        app.setAsDefaultProtocolClient('tic-devtools')
-    }
+
+if (process.argv.length >= 2) {
+    app.setAsDefaultProtocolClient('turing', process.execPath, [path.resolve(process.argv[1])]);
+} else {
+    app.setAsDefaultProtocolClient('turing')
 }
+
 
 const createWindow = () => {
     // Create the browser window.
@@ -82,7 +82,7 @@ if (!gotTheLock) {
             // Keep only command line / deep linked arguments
             const url = (commandLine[commandLine.length - 1])
             mainWindow.webContents.send('link', url)
-          }
+        }
 
         if (mainWindow) {
             if (mainWindow.isMinimized()) {
