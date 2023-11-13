@@ -21,7 +21,6 @@ function App() {
 
     return (
         <>
-            <Text>{version}</Text>
             <Background>
                 {
                     accountStore.isInitialized &&

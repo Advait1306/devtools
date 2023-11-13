@@ -21,7 +21,7 @@ function Emulators() {
 
     return (
         <Box pl={'84px'} pt={'60px'}>
-            <Text color={'white'} fontWeight={'bold'} fontSize={'36px'} letterSpacing={'-1.5px'}>Environments</Text>
+            <Text color={'white'} fontWeight={'bold'} fontSize={'36px'} letterSpacing={'-1.5px'}>Emulators</Text>
             <Box h={'24px'}/>
             <Box h={'250px'} w={'250px'} bg={'brand.primary'} borderRadius={'12px'} onDoubleClick={startEmulator} opacity={isAvailable ? 1 : 0.5}>
                 <Center h={'full'}>
