@@ -49,4 +49,9 @@ export default class InstanceRepository {
         // @ts-ignore
         return await window.electron.launchRemoteVSC(ip);
     }
+
+    async launchEmulator(ip: string) {
+        // @ts-ignore
+        return await window.electron.launchEmulator(ip);
+    }
 }

@@ -15,4 +15,5 @@ contextBridge.exposeInMainWorld('electron', {
     getAppVersion: () => ipcRenderer.invoke('get-app-version'),
     test: () => ipcRenderer.invoke('test'),
     print: (callback: (event: any, ...args: any[]) => void) => ipcRenderer.on('print', callback),
+    launchEmulator: (ip: string) => ipcRenderer.invoke('launch-emulator', ip),
 })

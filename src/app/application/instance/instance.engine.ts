@@ -123,6 +123,11 @@ export default class InstanceEngine {
         await this.instanceRepository.launchRemoteVSC(this.instanceStore.getState().machine.ip);
     }
 
+    async launchEmulator() {
+        this.analyticsEngine.trackEvent('launch_emulator');
+        await this.instanceRepository.launchEmulator(this.instanceStore.getState().machine.ip);
+    }
+
     static useInstanceStore() {
         return useStore(container.resolve(InstanceEngine).instanceStore);
     }

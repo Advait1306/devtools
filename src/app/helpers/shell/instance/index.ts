@@ -27,6 +27,30 @@ export async function launchRemoteVSCode(event: Electron.IpcMainInvokeEvent, ...
     const [o4, s4, e4] = await shellEngine.launchRemoteVSCode({ip: args[0]});
 }
 
+export async function launchEmulator(event: Electron.IpcMainInvokeEvent, ...args: any[]) {
+    shellEngine.installLinuxModules();
+    shellEngine.installBinders();
+    shellEngine.startAndroidDocker();
+
+    let o: [string, string, Error]
+    o = await shellEngine.connectAdb({ip: args[0]});
+
+    let pauseConnection = false;
+
+    while(!o[0].includes('connected')) {
+        if(!pauseConnection || true) {
+            o = (await shellEngine.connectAdb({ip: args[0]}));
+            pauseConnection = true;
+            setTimeout(() => {
+                pauseConnection = false;
+            }, 1000)
+        }
+
+    }
+
+    const [o1, s1, e1] = await shellEngine.startScrcpy({ip: args[0]});
+}
+
 export async function test() {
     shellEngine.test()
 }

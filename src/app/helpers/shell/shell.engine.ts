@@ -1,6 +1,6 @@
 import process from "process";
 import {log} from "electron-log";
-import {exec, spawn} from "child_process";
+import {exec, spawn, ChildProcess} from "child_process";
 import {mainWindow} from "../../../main";
 
 enum OS {
@@ -11,6 +11,8 @@ enum OS {
 }
 
 export default class ShellEngine {
+
+    shell: ChildProcess | undefined = undefined;
 
     private checkOS(): OS {
         const platform = process.platform;
@@ -121,26 +123,85 @@ export default class ShellEngine {
         // this.createSSHKey();
     }
 
+    installLinuxModules() {
+        const command = 'sudo apt install linux-modules-extra-`uname -r`'
+        return this.remoteExec(command)
+    }
+
+    installBinders() {
+        const command = 'sudo modprobe binder_linux devices="binder,hwbinder,vndbinder"'
+        this.remoteExec(command)
+    }
+
+    startAndroidDocker() {
+        const command = 'docker run -itd --rm --privileged --pull always -v ~/data:/data -p 5555:5555 redroid/redroid:14.0.0-latest'
+        this.remoteExec(command)
+    }
+
+    connectAdb({ip}: { ip: string }) {
+        const os = this.checkAndThrowUnsupportedOS();
+        const command = os === OS.darwin
+            ? `adb connect ${ip}`
+            : `adb connect ${ip}`;
+
+        return this.exec(command)
+    }
+
+    disconnectAdb({ip}: { ip: string }) {
+        const os = this.checkAndThrowUnsupportedOS();
+        const command = os === OS.darwin
+            ? `adb disconnect ${ip}`
+            : `adb disconnect ${ip}`;
+
+        return this.exec(command)
+    }
+
+    startScrcpy({ip}: { ip: string }) {
+        const os = this.checkAndThrowUnsupportedOS();
+        const command = os === OS.darwin
+            ? `scrcpy`
+            : `scrcpy`;
+
+        const args = os === OS.darwin
+            ? ['-s', ip]
+            : ['-s', ip];
+
+        return this.exec(command);
+    }
+
+
+
     private spawn(command: string, args: string[], onData: (data: string) => void, onExit: () => void) {
         const os = this.checkOS()
-        const shell = spawn(command, args, os === OS.win32 ? {'shell':'powershell.exe'} : {});
-        shell.stdout.on('data', (data) => {
+        this.shell = spawn(command, args, os === OS.win32 ? {'shell':'powershell.exe'} : {});
+        this.shell.stdout.on('data', (data) => {
             const dataString = data.toString();
             // const dataJson = eval(`(${dataString})`);
             console.log('spawn-data')
             console.log(dataString)
+
+            log('spawn-data')
+            log(dataString)
+
             onData(data)
         })
-        shell.stderr.on('data', (data) => {
+        this.shell.stderr.on('data', (data) => {
             const dataString = data.toString();
             // const dataJson = eval(`(${dataString})`);
             console.log('spawn-err')
             console.log(dataString)
+
+            log('spawn-err')
+            log(dataString)
             onData(data)
         })
-        shell.on('exit', (data) => {
+
+        this.shell.on('exit', (data) => {
             console.log('spawn-exit')
             console.log(data)
+
+            log('spawn-exit')
+            log(data)
             onExit()
         })
     }
@@ -165,5 +226,13 @@ export default class ShellEngine {
                 resolve([stdout, stderr, err]);
             })
         })
+    }
+
+    private remoteExec(command: string) {
+        console.log(command)
+        // Write this command to this.shell
+        this.shell.stdin.write(command)
+        // Write a newline to this.shell
+        this.shell.stdin.write('\n')
     }
 }

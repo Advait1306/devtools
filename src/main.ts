@@ -2,7 +2,7 @@ import {app, BrowserWindow, ipcMain} from 'electron';
 import path from 'path';
 import process from "process";
 import {exec} from 'child_process';
-import {connectViaSSH, createNewSSHKey, launchRemoteVSCode, test} from "./app/helpers/shell/instance";
+import {connectViaSSH, createNewSSHKey, launchEmulator, launchRemoteVSCode, test} from "./app/helpers/shell/instance";
 import {copyToClipboard} from "./app/helpers/clipboard";
 import {updateElectronApp, UpdateSourceType} from "update-electron-app";
 import {log} from "electron-log";
@@ -119,6 +119,8 @@ if (!gotTheLock) {
         })
 
         ipcMain.handle('test', test)
+
+        ipcMain.handle('launch-emulator', launchEmulator)
 
         createWindow()
     })
